@@ -1,3 +1,108 @@
+// Shared JS for both index.html and note.html
+
+// Navbar logo scroll/redirect
+const logo = document.getElementById('logo-link');
+if (logo) {
+  // On index.html scroll to Why Evernote, on note.html scroll to top
+  logo.addEventListener('click', function() {
+    const why = document.getElementById('why-evernote');
+    if (why) {
+      why.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
+
+// Log out (note.html)
+const logout = document.getElementById('logout-link');
+if (logout) {
+  logout.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = 'index.html';
+  });
+}
+
+// Smooth scroll for nav links (index.html)
+document.querySelectorAll('.scroll-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if(target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+// Login/Sign Up popup logic (index.html)
+const loginLink = document.getElementById('login-link');
+const loginPopup = document.getElementById('login-popup');
+const popupOverlay = document.getElementById('popup-overlay');
+if (loginLink && loginPopup && popupOverlay) {
+  loginLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    loginPopup.style.display = 'block';
+    popupOverlay.style.display = 'block';
+  });
+  document.getElementById('close-popup').addEventListener('click', function() {
+    loginPopup.style.display = 'none';
+    popupOverlay.style.display = 'none';
+  });
+  // Tab logic
+  document.getElementById('show-login').onclick = function() {
+    document.getElementById('login-form').style.display = '';
+    document.getElementById('signup-form').style.display = 'none';
+    this.style.background = '#3b82f6';
+    this.style.color = '#fff';
+    document.getElementById('show-signup').style.background = '#f3f4f6';
+    document.getElementById('show-signup').style.color = '#374151';
+  };
+  document.getElementById('show-signup').onclick = function() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('signup-form').style.display = '';
+    this.style.background = '#3b82f6';
+    this.style.color = '#fff';
+    document.getElementById('show-login').style.background = '#f3f4f6';
+    document.getElementById('show-login').style.color = '#374151';
+  };
+  document.getElementById('show-login').click();
+  // Login form demo
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    if(username && password) {
+      alert('Logged in as ' + username);
+      loginPopup.style.display = 'none';
+      popupOverlay.style.display = 'none';
+    } else {
+      document.getElementById('login-error').textContent = 'Please enter username and password.';
+      document.getElementById('login-error').style.display = 'block';
+    }
+  });
+  // Sign up form demo
+  document.getElementById('signup-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('signup-username').value.trim();
+    const name = document.getElementById('signup-name').value.trim();
+    const surname = document.getElementById('signup-surname').value.trim();
+    const mail = document.getElementById('signup-mail').value.trim();
+    const password = document.getElementById('signup-password').value;
+    if(username && name && surname && mail && password) {
+      alert('Account created for ' + username);
+      document.getElementById('login-form').style.display = '';
+      document.getElementById('signup-form').style.display = 'none';
+      document.getElementById('show-login').style.background = '#3b82f6';
+      document.getElementById('show-login').style.color = '#fff';
+      document.getElementById('show-signup').style.background = '#f3f4f6';
+      document.getElementById('show-signup').style.color = '#374151';
+    } else {
+      document.getElementById('signup-error').textContent = 'Please fill all required fields.';
+      document.getElementById('signup-error').style.display = 'block';
+    }
+  });
+}
+
 const notesContainer = document.querySelector(".notes-container");
 const createBtn = document.querySelector(".btn");
 const savedNotesList = document.querySelector('.saved-notes-list');
@@ -15,7 +120,9 @@ function getNotesArray() {
 }
 
 function getSavedNotesArray() {
-    return JSON.parse(localStorage.getItem("savedNotes") || "[]");
+    // Support both old (string) and new (object) format
+    const arr = JSON.parse(localStorage.getItem("savedNotes") || "[]");
+    return arr.map(n => typeof n === 'string' ? { title: '', text: n } : n);
 }
 function setSavedNotesArray(arr) {
     localStorage.setItem("savedNotes", JSON.stringify(arr));
@@ -27,8 +134,11 @@ function renderSavedNotes() {
     notesArr.forEach((note, idx) => {
         const noteDiv = document.createElement('div');
         noteDiv.className = 'saved-note-item';
-        noteDiv.textContent = note.length > 40 ? note.slice(0, 40) + '...' : note;
-        noteDiv.title = note;
+        // Show title and preview
+        const title = note.title || '';
+        const preview = note.text ? note.text.slice(0, 40) + (note.text.length > 40 ? '...' : '') : '';
+        noteDiv.innerHTML = `<div class="saved-title">${title}</div><div class="saved-preview">${preview}</div>`;
+        noteDiv.title = title + (preview ? ' - ' + preview : '');
         noteDiv.onclick = () => {
             openSavedNote(idx);
         };
@@ -48,6 +158,15 @@ function updateStorage() {
 }
 
 createBtn.addEventListener("click", ()=>{
+    // Create a container for title and note
+    let noteWrapper = document.createElement("div");
+    noteWrapper.className = "note-wrapper";
+    // Title input
+    let titleInput = document.createElement("input");
+    titleInput.className = "note-title-input";
+    titleInput.setAttribute("type", "text");
+    titleInput.setAttribute("placeholder", "Note Title");
+    // Note content
     let inputBox = document.createElement("p");
     let img = document.createElement("img");
     inputBox.className = "input-box";
@@ -56,7 +175,9 @@ createBtn.addEventListener("click", ()=>{
     img.src = "Trash.png";
     img.alt = "Delete";
     inputBox.appendChild(img);
-    notesContainer.appendChild(inputBox);
+    noteWrapper.appendChild(titleInput);
+    noteWrapper.appendChild(inputBox);
+    notesContainer.appendChild(noteWrapper);
     updateStorage();
 })
 
@@ -69,19 +190,22 @@ notesContainer.addEventListener("click", function(e){
         confirmDiv.style.top = '50%';
         confirmDiv.style.left = '50%';
         confirmDiv.style.transform = 'translate(-50%, -50%)';
-        confirmDiv.style.background = '#fff';
-        confirmDiv.style.border = '1px solid #888';
-        confirmDiv.style.borderRadius = '12px';
-        confirmDiv.style.boxShadow = '0 4px 24px rgba(0,0,0,0.18)';
-        confirmDiv.style.padding = '32px 28px 24px 28px';
+        confirmDiv.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%)';
+        confirmDiv.style.border = 'none';
+        confirmDiv.style.borderRadius = '18px';
+        confirmDiv.style.boxShadow = '0 8px 32px rgba(59,130,246,0.13), 0 1.5px 8px rgba(0,0,0,0.08)';
+        confirmDiv.style.padding = '38px 36px 28px 36px';
         confirmDiv.style.zIndex = '1000';
         confirmDiv.style.textAlign = 'center';
-        confirmDiv.style.minWidth = '280px';
+        confirmDiv.style.minWidth = '320px';
+        confirmDiv.style.maxWidth = '90vw';
+        confirmDiv.style.fontFamily = 'Segoe UI, Arial, sans-serif';
         confirmDiv.innerHTML = `
-            <div style="font-size:1.15rem;font-weight:500;margin-bottom:18px;">Are you sure you want to delete this note?</div>
-            <div style="display:flex;gap:18px;justify-content:center;">
-                <button class="confirm-yes" style="background:#e74c3c;color:#fff;border:none;padding:8px 22px;border-radius:6px;font-size:1rem;cursor:pointer;transition:background 0.2s;">Yes</button>
-                <button class="confirm-no" style="background:#f1f1f1;color:#333;border:none;padding:8px 22px;border-radius:6px;font-size:1rem;cursor:pointer;transition:background 0.2s;">No</button>
+            <div style="font-size:1.22rem;font-weight:600;margin-bottom:18px;color:#2d3a4a;letter-spacing:0.2px;">Delete Note?</div>
+            <div style="font-size:1.04rem;color:#4b5563;margin-bottom:28px;">This action cannot be undone. Are you sure you want to delete this note?</div>
+            <div style="display:flex;gap:22px;justify-content:center;">
+                <button class="confirm-yes" style="background:linear-gradient(90deg,#ef4444 0%,#f87171 100%);color:#fff;border:none;padding:10px 32px;border-radius:8px;font-size:1.08rem;font-weight:500;cursor:pointer;box-shadow:0 2px 8px rgba(239,68,68,0.08);transition:background 0.2s,box-shadow 0.2s;">Yes, Delete</button>
+                <button class="confirm-no" style="background:linear-gradient(90deg,#f3f4f6 0%,#e5e7eb 100%);color:#374151;border:none;padding:10px 32px;border-radius:8px;font-size:1.08rem;font-weight:500;cursor:pointer;box-shadow:0 2px 8px rgba(59,130,246,0.04);transition:background 0.2s,box-shadow 0.2s;">Cancel</button>
             </div>
         `;
         document.body.appendChild(confirmDiv);
@@ -93,8 +217,9 @@ notesContainer.addEventListener("click", function(e){
         overlay.style.left = '0';
         overlay.style.width = '100vw';
         overlay.style.height = '100vh';
-        overlay.style.background = 'rgba(0,0,0,0.25)';
+        overlay.style.background = 'rgba(59,130,246,0.10)';
         overlay.style.zIndex = '999';
+        overlay.style.backdropFilter = 'blur(2.5px)';
         document.body.appendChild(overlay);
         confirmDiv.querySelector('.confirm-yes').onclick = function() {
             e.target.parentElement.remove();
@@ -125,21 +250,24 @@ document.addEventListener("keydown", event =>{
 })
 
 function saveFirstNote() {
-    const firstNote = notesContainer.querySelector('.input-box');
-    if (firstNote) {
-        const noteText = firstNote.innerText.replace(/\n+$/, '').trim();
-        if (noteText) {
+    const noteWrapper = notesContainer.querySelector('.note-wrapper');
+    if (noteWrapper) {
+        const titleInput = noteWrapper.querySelector('.note-title-input');
+        const inputBox = noteWrapper.querySelector('.input-box');
+        const noteTitle = titleInput.value.trim();
+        const noteText = inputBox.innerText.replace(/\n+$/, '').trim();
+        if (noteTitle && noteText) {
             const savedArr = getSavedNotesArray();
             if (editingSavedNoteIdx !== null) {
                 // Update existing saved note
-                savedArr[editingSavedNoteIdx] = noteText;
+                savedArr[editingSavedNoteIdx] = { title: noteTitle, text: noteText };
             } else {
                 // Add as new saved note
-                savedArr.push(noteText);
+                savedArr.push({ title: noteTitle, text: noteText });
             }
             setSavedNotesArray(savedArr);
         }
-        firstNote.remove();
+        noteWrapper.remove();
         editingSavedNoteIdx = null; // Reset after saving
         updateStorage();
     }
@@ -152,16 +280,25 @@ function openSavedNote(idx) {
     if (savedArr[idx]) {
         // Replace all notes with the selected saved note for editing
         notesContainer.innerHTML = '';
+        let noteWrapper = document.createElement("div");
+        noteWrapper.className = "note-wrapper";
+        let titleInput = document.createElement("input");
+        titleInput.className = "note-title-input";
+        titleInput.setAttribute("type", "text");
+        titleInput.setAttribute("placeholder", "Note Title");
+        titleInput.value = savedArr[idx].title || '';
         let inputBox = document.createElement("p");
         let img = document.createElement("img");
         inputBox.className = "input-box";
         inputBox.setAttribute("contenteditable", "true");
         inputBox.setAttribute("placeholder", "Write your note here...");
-        inputBox.innerText = savedArr[idx];
+        inputBox.innerText = savedArr[idx].text || '';
         img.src = "Trash.png";
         img.alt = "Delete";
         inputBox.appendChild(img);
-        notesContainer.appendChild(inputBox);
+        noteWrapper.appendChild(titleInput);
+        noteWrapper.appendChild(inputBox);
+        notesContainer.appendChild(noteWrapper);
         editingSavedNoteIdx = idx; // Set the index being edited
         updateStorage();
     }
