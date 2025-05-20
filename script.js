@@ -72,9 +72,8 @@ if (loginLink && loginPopup && popupOverlay) {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
     if(username && password) {
-      alert('Logged in as ' + username);
-      loginPopup.style.display = 'none';
-      popupOverlay.style.display = 'none';
+      // Redirect to note.html on successful login
+      window.location.href = 'note.html';
     } else {
       document.getElementById('login-error').textContent = 'Please enter username and password.';
       document.getElementById('login-error').style.display = 'block';
