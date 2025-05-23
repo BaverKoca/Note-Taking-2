@@ -15,7 +15,8 @@
     <div class="profile-dropdown">
       <a href="#" class="nav-profile">Profile</a>
       <div class="dropdown-content">
-        <a href="#" class="dropdown-link">Archive</a>
+        <a href="#" class="dropdown-link">Profile</a>
+        <a href="#" class="dropdown-link">Settings</a>
         <a href="#" class="dropdown-link" id="logout-link">Log out</a>
       </div>
     </div>
@@ -37,5 +38,45 @@
 <footer class="footer">
   <p>&copy; 2025 Evernote Corporation<br>Developed by Baver Koca</p>
 </footer>
+<script>
+// Session management for inactivity and logout
+(function() {
+  let sessionTimeout;
+  const SESSION_DURATION = 300 * 1000; // 1 minute
+
+  function endSession() {
+    // Clear session and redirect
+    localStorage.removeItem('userSession');
+    window.location.href = 'index.html';
+  }
+
+  function resetSessionTimer() {
+    clearTimeout(sessionTimeout);
+    sessionTimeout = setTimeout(endSession, SESSION_DURATION);
+  }
+
+  // Start session if not present
+  if (!localStorage.getItem('userSession')) {
+    localStorage.setItem('userSession', 'active');
+  }
+
+  // Reset timer on user activity
+  ['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, resetSessionTimer, true);
+  });
+
+  // End session on logout
+  const logout = document.getElementById('logout-link');
+  if (logout) {
+    logout.addEventListener('click', function(e) {
+      e.preventDefault();
+      endSession();
+    });
+  }
+
+  // Start timer on load
+  resetSessionTimer();
+})();
+</script>
 </body>
 </html>
