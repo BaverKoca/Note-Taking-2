@@ -72,9 +72,8 @@ if (loginLink && loginPopup && popupOverlay) {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
     if(username && password) {
-      alert('Logged in as ' + username);
-      loginPopup.style.display = 'none';
-      popupOverlay.style.display = 'none';
+      // Redirect to note.html on successful login
+      window.location.href = 'note.html';
     } else {
       document.getElementById('login-error').textContent = 'Please enter username and password.';
       document.getElementById('login-error').style.display = 'block';
@@ -161,11 +160,12 @@ createBtn.addEventListener("click", ()=>{
     // Create a container for title and note
     let noteWrapper = document.createElement("div");
     noteWrapper.className = "note-wrapper";
-    // Title input
+    // Title input (no label)
     let titleInput = document.createElement("input");
     titleInput.className = "note-title-input";
     titleInput.setAttribute("type", "text");
     titleInput.setAttribute("placeholder", "Note Title");
+    noteWrapper.appendChild(titleInput);
     // Note content
     let inputBox = document.createElement("p");
     let img = document.createElement("img");
@@ -175,7 +175,6 @@ createBtn.addEventListener("click", ()=>{
     img.src = "Trash.png";
     img.alt = "Delete";
     inputBox.appendChild(img);
-    noteWrapper.appendChild(titleInput);
     noteWrapper.appendChild(inputBox);
     notesContainer.appendChild(noteWrapper);
     updateStorage();
@@ -222,7 +221,16 @@ notesContainer.addEventListener("click", function(e){
         overlay.style.backdropFilter = 'blur(2.5px)';
         document.body.appendChild(overlay);
         confirmDiv.querySelector('.confirm-yes').onclick = function() {
-            e.target.parentElement.remove();
+            // Remove from savedNotes if editing a saved note
+            if (editingSavedNoteIdx !== null) {
+                const savedArr = getSavedNotesArray();
+                savedArr.splice(editingSavedNoteIdx, 1);
+                setSavedNotesArray(savedArr);
+                editingSavedNoteIdx = null;
+            }
+            // Remove the entire note-wrapper (which contains both title and note)
+            const noteWrapper = e.target.closest('.note-wrapper');
+            if (noteWrapper) noteWrapper.remove();
             document.body.removeChild(confirmDiv);
             document.body.removeChild(overlay);
             updateStorage();
@@ -249,21 +257,26 @@ document.addEventListener("keydown", event =>{
     }
 })
 
+// Remove all note titles from the page
+const allTitles = document.querySelectorAll('.note-title-input');
+allTitles.forEach(title => title.remove());
+
 function saveFirstNote() {
     const noteWrapper = notesContainer.querySelector('.note-wrapper');
     if (noteWrapper) {
         const titleInput = noteWrapper.querySelector('.note-title-input');
         const inputBox = noteWrapper.querySelector('.input-box');
-        const noteTitle = titleInput.value.trim();
+        const noteTitle = titleInput ? titleInput.value.trim() : '';
         const noteText = inputBox.innerText.replace(/\n+$/, '').trim();
-        if (noteTitle && noteText) {
-            const savedArr = getSavedNotesArray();
+        if (noteTitle || noteText) {
+            let savedArr = getSavedNotesArray();
             if (editingSavedNoteIdx !== null) {
-                // Update existing saved note
-                savedArr[editingSavedNoteIdx] = { title: noteTitle, text: noteText };
+                // Remove the old note and add updated note to the top
+                savedArr.splice(editingSavedNoteIdx, 1);
+                savedArr.unshift({ title: noteTitle, text: noteText });
             } else {
-                // Add as new saved note
-                savedArr.push({ title: noteTitle, text: noteText });
+                // Add as new saved note to the top
+                savedArr.unshift({ title: noteTitle, text: noteText });
             }
             setSavedNotesArray(savedArr);
         }
@@ -282,11 +295,13 @@ function openSavedNote(idx) {
         notesContainer.innerHTML = '';
         let noteWrapper = document.createElement("div");
         noteWrapper.className = "note-wrapper";
+        // Title input (no label)
         let titleInput = document.createElement("input");
         titleInput.className = "note-title-input";
         titleInput.setAttribute("type", "text");
         titleInput.setAttribute("placeholder", "Note Title");
         titleInput.value = savedArr[idx].title || '';
+        noteWrapper.appendChild(titleInput);
         let inputBox = document.createElement("p");
         let img = document.createElement("img");
         inputBox.className = "input-box";
@@ -296,7 +311,6 @@ function openSavedNote(idx) {
         img.src = "Trash.png";
         img.alt = "Delete";
         inputBox.appendChild(img);
-        noteWrapper.appendChild(titleInput);
         noteWrapper.appendChild(inputBox);
         notesContainer.appendChild(noteWrapper);
         editingSavedNoteIdx = idx; // Set the index being edited
