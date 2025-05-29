@@ -38,6 +38,17 @@ db.serialize(() => {
     updated DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id)
   )`);
+  db.run(`CREATE TABLE IF NOT EXISTS diary_entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    date TEXT,
+    title TEXT,
+    content TEXT,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    UNIQUE(user_id, date)
+  )`);
 });
 
 // Auth endpoints
@@ -132,6 +143,48 @@ app.put('/api/profile', (req, res) => {
     query += ' WHERE id = ?';
   }
   db.run(query, params, function(err) {
+    if (err) return res.status(500).json({ error: 'DB error' });
+    res.json({ success: true });
+  });
+});
+
+// Diary endpoints
+app.get('/api/diary', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  db.all('SELECT date, title, content FROM diary_entries WHERE user_id = ? ORDER BY date DESC', [req.session.userId], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'DB error' });
+    res.json(rows);
+  });
+});
+
+app.get('/api/diary/:date', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  db.get('SELECT title, content FROM diary_entries WHERE user_id = ? AND date = ?', [req.session.userId, req.params.date], (err, entry) => {
+    if (err) return res.status(500).json({ error: 'DB error' });
+    res.json(entry || { error: 'Entry not found' });
+  });
+});
+
+app.put('/api/diary/:date', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  const { title, content } = req.body;
+  if (!title || !content) return res.status(400).json({ error: 'Title and content required' });
+  
+  db.run(`INSERT INTO diary_entries (user_id, date, title, content) 
+          VALUES (?, ?, ?, ?)
+          ON CONFLICT(user_id, date) 
+          DO UPDATE SET title = ?, content = ?, updated = CURRENT_TIMESTAMP`,
+    [req.session.userId, req.params.date, title, content, title, content],
+    function(err) {
+      if (err) return res.status(500).json({ error: 'DB error' });
+      res.json({ success: true });
+    }
+  );
+});
+
+app.delete('/api/diary/:date', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  db.run('DELETE FROM diary_entries WHERE user_id = ? AND date = ?', [req.session.userId, req.params.date], function(err) {
     if (err) return res.status(500).json({ error: 'DB error' });
     res.json({ success: true });
   });
