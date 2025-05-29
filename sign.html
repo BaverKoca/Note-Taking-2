@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In / Sign Up - Evernote</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: #f3f4f6; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    .auth-container {
+      max-width: 400px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(59,130,246,0.13),0 1.5px 8px rgba(0,0,0,0.08);
+      padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .auth-toggle {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+    .auth-toggle button {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      background: #f3f4f6;
+      color: #374151;
+      transition: background 0.2s;
+    }
+    .auth-toggle button.active {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .auth-form h2 {
+      font-size: 1.5rem;
+      color: #2563eb;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 1.08rem;
+      border-radius: 7px;
+      border: 1.5px solid #e3e6ea;
+      margin-bottom: 14px;
+      outline: none;
+    }
+    .auth-form button[type="submit"] {
+      width: 100%;
+      background: #00a82d;
+      color: #fff;
+      border: none;
+      padding: 12px 0;
+      border-radius: 7px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 1rem;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-toggle">
+      <button id="loginTab" class="active">Login</button>
+      <button id="signupTab">Sign Up</button>
+    </div>
+    <form id="loginForm" class="auth-form">
+      <h2>Login to Evernote</h2>
+      <input id="login-username" type="text" placeholder="Username" required />
+      <input id="login-password" type="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+      <div id="login-error" class="error-message"></div>
+    </form>
+    <form id="signupForm" class="auth-form" style="display:none;">
+      <h2>Sign Up for Evernote</h2>
+      <input id="signup-username" type="text" placeholder="Username (required)" required />
+      <input id="signup-name" type="text" placeholder="Name (required)" required />
+      <input id="signup-surname" type="text" placeholder="Surname (required)" required />
+      <input id="signup-mail" type="email" placeholder="Mail (required)" required />
+      <input id="signup-phone" type="tel" placeholder="Phone (optional)" />
+      <input id="signup-password" type="password" placeholder="Password (required)" required />
+      <button type="submit">Sign Up</button>
+      <div id="signup-error" class="error-message"></div>
+    </form>
+  </div>
+  <script>
+    // Toggle logic
+    const loginTab = document.getElementById('loginTab');
+    const signupTab = document.getElementById('signupTab');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    loginTab.onclick = function() {
+      loginTab.classList.add('active');
+      signupTab.classList.remove('active');
+      loginForm.style.display = '';
+      signupForm.style.display = 'none';
+    };
+    signupTab.onclick = function() {
+      signupTab.classList.add('active');
+      loginTab.classList.remove('active');
+      signupForm.style.display = '';
+      loginForm.style.display = 'none';
+    };
+
+    // Signup logic: send all fields to backend
+    signupForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const username = document.getElementById('signup-username').value.trim();
+      const name = document.getElementById('signup-name').value.trim();
+      const surname = document.getElementById('signup-surname').value.trim();
+      const mail = document.getElementById('signup-mail').value.trim();
+      const phone = document.getElementById('signup-phone').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const errorDiv = document.getElementById('signup-error');
+      errorDiv.style.display = 'none';
+      if (!username || !name || !surname || !mail || !password) {
+        errorDiv.textContent = 'Please fill all required fields.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, name, surname, mail, phone, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = 'note.html';
+        } else {
+          errorDiv.textContent = data.error || 'Sign up failed.';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Server error.';
+        errorDiv.style.display = 'block';
+      }
+    };
+
+    // Login logic: send credentials to backend
+    loginForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      errorDiv.style.display = 'none';
+      if (!username || !password) {
+        errorDiv.textContent = 'Please enter username and password.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = 'note.html';
+        } else {
+          errorDiv.textContent = data.error || 'Login failed.';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Server error.';
+        errorDiv.style.display = 'block';
+      }
+    };
+  </script>
+</body>
+</html>
