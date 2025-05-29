@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - Evernote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo" id="logo-link">Evernote</div>
+    <nav class="nav-links" style="position:relative;">
+      <button id="profile-btn" class="profile-btn">Profile</button>
+      <div id="profile-menu" class="profile-menu">
+        <button class="profile-menu-btn" id="profile-menu-profile">Profile</button>
+        <button class="profile-menu-btn" id="profile-menu-diary">Diary</button>
+        <button class="profile-menu-btn" id="profile-menu-settings">Settings</button>
+        <button class="profile-menu-btn" id="logout-link">Logout</button>
+      </div>
+    </nav>
+  </header>
+  <div class="container">
+    <h1>Settings</h1>
+    <p>This is your settings page. You can add settings features here.</p>
+  </div>
+  <footer class="footer">
+    <p>&copy; 2025 Evernote Corporation<br>Developed by Baver Koca</p>
+  </footer>
+  <script>
+    // Profile menu logic (same as note.html)
+    const profileBtn = document.getElementById('profile-btn');
+    const profileMenu = document.getElementById('profile-menu');
+    let menuOpen = false;
+    profileBtn.onclick = function(e) {
+      e.stopPropagation();
+      menuOpen = !menuOpen;
+      profileMenu.style.display = menuOpen ? 'flex' : 'none';
+    };
+    document.addEventListener('click', function(e) {
+      if (menuOpen && !profileMenu.contains(e.target) && e.target !== profileBtn) {
+        profileMenu.style.display = 'none';
+        menuOpen = false;
+      }
+    });
+    document.getElementById('profile-menu-profile').onclick = function() {
+      window.location.href = 'profile.html';
+    };
+    document.getElementById('profile-menu-diary').onclick = function() {
+      window.location.href = 'diary.html';
+    };
+    document.getElementById('profile-menu-settings').onclick = function() {
+      window.location.href = 'settings.html';
+    };
+    document.getElementById('logout-link').onclick = function(e) {
+      e.preventDefault();
+      fetch('/api/logout', { method: 'POST', credentials: 'include' })
+        .then(() => window.location.href = 'index.html');
+    };
+  </script>
+</body>
+</html>
