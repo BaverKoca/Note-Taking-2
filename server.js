@@ -109,4 +109,32 @@ app.delete('/api/notes/:id', (req, res) => {
   });
 });
 
+// Profile endpoints
+app.get('/api/profile', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  db.get('SELECT username, name, surname, mail, phone FROM users WHERE id = ?', [req.session.userId], (err, user) => {
+    if (err || !user) return res.status(500).json({ error: 'DB error' });
+    res.json(user);
+  });
+});
+
+app.put('/api/profile', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  const { name, surname, mail, phone, password } = req.body;
+  if (!name || !surname || !mail) return res.status(400).json({ error: 'Missing fields' });
+  let query = 'UPDATE users SET name = ?, surname = ?, mail = ?, phone = ?';
+  let params = [name, surname, mail, phone || '', req.session.userId];
+  if (password && password.trim()) {
+    const hash = bcrypt.hashSync(password, 10);
+    query = 'UPDATE users SET name = ?, surname = ?, mail = ?, phone = ?, password = ? WHERE id = ?';
+    params = [name, surname, mail, phone || '', hash, req.session.userId];
+  } else {
+    query += ' WHERE id = ?';
+  }
+  db.run(query, params, function(err) {
+    if (err) return res.status(500).json({ error: 'DB error' });
+    res.json({ success: true });
+  });
+});
+
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

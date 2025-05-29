@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - Evernote</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .profile-container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(59,130,246,0.13),0 1.5px 8px rgba(0,0,0,0.08);
+      padding: 2.5rem;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      background: #3b82f6;
+      border-radius: 60px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: 600;
+    }
+
+    .profile-title {
+      color: #2563eb;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .profile-subtitle {
+      color: #6b7280;
+      margin-top: 0.5rem;
+    }
+
+    .profile-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 1rem;
+      border-radius: 7px;
+      border: 1.5px solid #e3e6ea;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #3b82f6;
+    }
+
+    .form-group input:disabled {
+      background: #f3f4f6;
+      cursor: not-allowed;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .edit-btn, .save-btn, .cancel-btn {
+      flex: 1;
+      padding: 12px 0;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .edit-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+    }
+
+    .save-btn {
+      background: #00a82d;
+      color: white;
+      border: none;
+    }
+
+    .cancel-btn {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1.5px solid #e3e6ea;
+    }
+
+    .button-group {
+      display: none;
+    }
+
+    .success-message {
+      color: #00a82d;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .error-message {
+      color: #ef4444;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo" id="logo-link">Evernote</div>
+    <nav class="nav-links">
+      <a href="note.html">Notes</a>
+      <a href="profile.html" class="active">Profile</a>
+      <a href="#" id="logout-link">Logout</a>
+    </nav>
+  </header>
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profile-avatar"></div>
+      <h1 class="profile-title">My Profile</h1>
+      <p class="profile-subtitle">Manage your personal information</p>
+    </div>
+
+    <form class="profile-form" id="profile-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" disabled />
+      </div>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" disabled required />
+      </div>
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" disabled required />
+      </div>
+      <div class="form-group">
+        <label for="mail">Email</label>
+        <input type="email" id="mail" disabled required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone (Optional)</label>
+        <input type="tel" id="phone" disabled />
+      </div>
+      <div class="form-group">
+        <label for="password">New Password (Leave empty to keep current)</label>
+        <input type="password" id="password" disabled />
+      </div>
+
+      <div class="profile-actions">
+        <button type="button" class="edit-btn" id="edit-btn">Edit Profile</button>
+        <div class="button-group" id="button-group">
+          <button type="submit" class="save-btn">Save Changes</button>
+          <button type="button" class="cancel-btn" id="cancel-btn">Cancel</button>
+        </div>
+      </div>
+
+      <div class="success-message" id="success-message">Profile updated successfully!</div>
+      <div class="error-message" id="error-message"></div>
+    </form>
+  </div>
+
+  <script>
+    // Session check
+    fetch('/api/session', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.loggedIn) window.location.href = 'sign.html';
+      });
+
+    const form = document.getElementById('profile-form');
+    const editBtn = document.getElementById('edit-btn');
+    const buttonGroup = document.getElementById('button-group');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
+    const inputs = form.querySelectorAll('input:not([disabled])');
+    let originalData = {};
+
+    // Fetch user profile data
+    function fetchProfile() {
+      fetch('/api/profile', { credentials: 'include' })
+        .then(r => r.json())
+        .then(user => {
+          originalData = user;
+          document.getElementById('username').value = user.username;
+          document.getElementById('name').value = user.name;
+          document.getElementById('surname').value = user.surname;
+          document.getElementById('mail').value = user.mail;
+          document.getElementById('phone').value = user.phone || '';
+          
+          // Set avatar initials
+          const initials = (user.name[0] + user.surname[0]).toUpperCase();
+          document.getElementById('profile-avatar').textContent = initials;
+        });
+    }
+
+    // Enable form editing
+    editBtn.onclick = function() {
+      const inputs = form.querySelectorAll('input:not([id="username"])');
+      inputs.forEach(input => input.disabled = false);
+      editBtn.style.display = 'none';
+      buttonGroup.style.display = 'flex';
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+    };
+
+    // Cancel editing
+    cancelBtn.onclick = function() {
+      const inputs = form.querySelectorAll('input:not([id="username"])');
+      inputs.forEach(input => {
+        input.disabled = true;
+        if (input.id === 'password') {
+          input.value = '';
+        } else {
+          input.value = originalData[input.id] || '';
+        }
+      });
+      editBtn.style.display = 'block';
+      buttonGroup.style.display = 'none';
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+    };
+
+    // Handle form submission
+    form.onsubmit = async function(e) {
+      e.preventDefault();
+      const formData = {
+        name: document.getElementById('name').value.trim(),
+        surname: document.getElementById('surname').value.trim(),
+        mail: document.getElementById('mail').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const res = await fetch('/api/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(formData)
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          const inputs = form.querySelectorAll('input:not([id="username"])');
+          inputs.forEach(input => {
+            input.disabled = true;
+            if (input.id === 'password') {
+              input.value = '';
+            }
+          });
+          editBtn.style.display = 'block';
+          buttonGroup.style.display = 'none';
+          successMessage.style.display = 'block';
+          errorMessage.style.display = 'none';
+          fetchProfile(); // Refresh profile data
+        } else {
+          errorMessage.textContent = data.error || 'Update failed.';
+          errorMessage.style.display = 'block';
+          successMessage.style.display = 'none';
+        }
+      } catch (err) {
+        errorMessage.textContent = 'Server error.';
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+      }
+    };
+
+    // Logout handler
+    document.getElementById('logout-link').onclick = function(e) {
+      e.preventDefault();
+      fetch('/api/logout', { method: 'POST', credentials: 'include' })
+        .then(() => window.location.href = 'index.html');
+    };
+
+    // Initialize
+    fetchProfile();
+  </script>
+</body>
+</html>

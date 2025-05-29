@@ -166,6 +166,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  position: relative;
 }
 .sidebar h2 {
   font-size: 1.25rem;
@@ -309,6 +310,70 @@ body {
   color: #64748b;
   white-space: pre-line;
   word-break: break-word;
+}
+
+/* Profile button and menu styles */
+.profile-btn {
+  background: #fff;
+  color: #00a82d;
+  border: 2px solid #00a82d;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  position: relative;
+  z-index: 20;
+}
+.profile-btn:hover {
+  background: #00a82d;
+  color: #fff;
+}
+.profile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  padding: 0;
+  min-width: 160px;
+  position: absolute;
+  top: 54px; /* height of navbar */
+  right: 2rem;
+  z-index: 15;
+  border: 1.5px solid #e3e6ea;
+}
+@media (max-width: 600px) {
+  .profile-menu {
+    right: 0.5rem;
+    min-width: 120px;
+  }
+}
+.profile-menu-btn {
+  background: none;
+  border: none;
+  color: #2d3a4a;
+  font-size: 1.08rem;
+  padding: 14px 0;
+  width: 100%;
+  text-align: left;
+  padding-left: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.profile-menu-btn:last-child {
+  border-bottom: none;
+}
+.profile-menu-btn:hover {
+  background: #e6f4ea;
+  color: #00a82d;
+}
+.nav-links {
+  position: relative;
 }
 
 /* Responsive */
