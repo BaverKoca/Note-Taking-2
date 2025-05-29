@@ -14,7 +14,7 @@
       <a href="#features" class="scroll-link">Features</a>
       <a href="#plans" class="scroll-link">Plans</a>
       <a href="#download" class="scroll-link">Download</a>
-      <a href="#" id="login-link">Log In</a>
+      <a href="#" id="login-link">Login</a>
     </nav>
   </header>
   <!-- Announcement Bar -->
@@ -78,34 +78,17 @@
     <p>&copy; 2025 Evernote Corporation<br>Developed by Baver Koca</p>
   </footer>
 
-  <!-- Login/Sign Up Popup -->
-  <div id="login-popup" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:2.5rem 2rem 2rem 2rem;border-radius:16px;box-shadow:0 8px 32px rgba(59,130,246,0.13),0 1.5px 8px rgba(0,0,0,0.08);z-index:1001;min-width:340px;max-width:95vw;">
-    <div id="login-signin-toggle" style="display:flex;justify-content:center;gap:18px;margin-bottom:18px;">
-      <button id="show-login" style="background:#3b82f6;color:#fff;border:none;padding:8px 32px;border-radius:8px;font-size:1.08rem;font-weight:500;cursor:pointer;">Log In</button>
-      <button id="show-signup" style="background:#f3f4f6;color:#374151;border:none;padding:8px 32px;border-radius:8px;font-size:1.08rem;font-weight:500;cursor:pointer;">Sign Up</button>
-    </div>
-    <form id="login-form">
-      <h2 style="font-size:1.5rem;color:#2563eb;margin-bottom:18px;">Log In to Evernote</h2>
-      <input id="login-username" type="text" placeholder="Username" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:16px;outline:none;">
-      <input id="login-password" type="password" placeholder="Password" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:16px;outline:none;">
-      <button type="submit" style="width:100%;background:#00a82d;color:#fff;border:none;padding:12px 0;border-radius:7px;font-size:1.08rem;font-weight:500;cursor:pointer;">Log In</button>
-      <div id="login-error" class="error-message" style="color:#ef4444;font-size:0.98rem;margin-top:12px;display:none;"></div>
-    </form>
-    <form id="signup-form" style="display:none;">
-      <h2 style="font-size:1.5rem;color:#2563eb;margin-bottom:18px;">Sign Up for Evernote</h2>
-      <input id="signup-username" type="text" placeholder="Username (required)" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:12px;outline:none;">
-      <input id="signup-name" type="text" placeholder="Name (required)" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:12px;outline:none;">
-      <input id="signup-surname" type="text" placeholder="Surname (required)" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:12px;outline:none;">
-      <input id="signup-mail" type="email" placeholder="Mail (required)" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:12px;outline:none;">
-      <input id="signup-phone" type="tel" placeholder="Phone (optional)" style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:12px;outline:none;">
-      <input id="signup-password" type="password" placeholder="Password (required)" required style="width:100%;padding:10px 14px;font-size:1.08rem;border-radius:7px;border:1.5px solid #e3e6ea;margin-bottom:16px;outline:none;">
-      <button type="submit" style="width:100%;background:#00a82d;color:#fff;border:none;padding:12px 0;border-radius:7px;font-size:1.08rem;font-weight:500;cursor:pointer;">Sign Up</button>
-      <div id="signup-error" class="error-message" style="color:#ef4444;font-size:0.98rem;margin-top:12px;display:none;"></div>
-    </form>
-    <button id="close-popup" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
-  </div>
-  <div id="popup-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;"></div>
-
   <script src="script.js"></script>
+  <script>
+    // End session if user lands on index.html
+    (function() {
+      localStorage.removeItem('userSession');
+      // Redirect to sign.html when login button is clicked
+      document.getElementById('login-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = 'sign.html';
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -61,7 +61,8 @@ body {
   z-index: 10;
   margin-top: 8px;
 }
-.profile-dropdown:hover .dropdown-content {
+.profile-dropdown:hover .dropdown-content,
+.profile-dropdown .dropdown-content:hover {
   display: block;
 }
 .dropdown-link {
