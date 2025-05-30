@@ -157,5 +157,81 @@
     };
     fetchNotes();
   </script>
+  <script>
+    // Apply user settings from localStorage
+    function applySettings() {
+      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      // Theme
+      if (s.theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else if (s.theme === 'light') {
+        document.body.classList.remove('dark-theme');
+      } else if (s.theme === 'system') {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.body.classList.add('dark-theme');
+        } else {
+          document.body.classList.remove('dark-theme');
+        }
+      }
+      // Font size
+      document.body.style.fontSize = s.fontSize === 'small' ? '14px' : s.fontSize === 'large' ? '18px' : '16px';
+      // Language (demo for main UI)
+      const langMap = {
+        en: { notes: 'Note Editor', save: 'Save', del: 'Delete', newNote: '+ New Note', yourNotes: 'Your Notes' },
+        tr: { notes: 'Not Düzenleyici', save: 'Kaydet', del: 'Sil', newNote: '+ Yeni Not', yourNotes: 'Notlarınız' },
+        de: { notes: 'Notiz-Editor', save: 'Speichern', del: 'Löschen', newNote: '+ Neue Notiz', yourNotes: 'Ihre Notizen' },
+        fr: { notes: 'Éditeur de Notes', save: 'Enregistrer', del: 'Supprimer', newNote: '+ Nouvelle Note', yourNotes: 'Vos Notes' }
+      };
+      const t = langMap[s.lang || 'en'];
+      if (t) {
+        const h1 = document.querySelector('.notes-container h1');
+        if (h1) h1.textContent = t.notes;
+        const saveBtn = document.getElementById('save-note-btn');
+        if (saveBtn) saveBtn.textContent = t.save;
+        const delBtn = document.getElementById('delete-note-btn');
+        if (delBtn) delBtn.textContent = t.del;
+        const addBtn = document.getElementById('add-note-btn');
+        if (addBtn) addBtn.textContent = t.newNote;
+        const notesTitle = document.querySelector('.sidebar h2');
+        if (notesTitle) notesTitle.textContent = t.yourNotes;
+      }
+    }
+    applySettings();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      if (s.theme === 'system') applySettings();
+    });
+  </script>
+  <script>
+    // Add dark theme CSS
+    (function(){
+      const style = document.createElement('style');
+      style.textContent = `
+        body.dark-theme {
+          background: #181a1b !important;
+          color: #e5e7eb !important;
+        }
+        body.dark-theme .container, body.dark-theme .settings-container, body.dark-theme .notes-container {
+          background: #23272b !important;
+          color: #e5e7eb !important;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+        }
+        body.dark-theme select, body.dark-theme input, body.dark-theme textarea {
+          background: #23272b !important;
+          color: #e5e7eb !important;
+          border-color: #374151 !important;
+        }
+        body.dark-theme .save-btn {
+          background: linear-gradient(90deg,#00a82d 0%,#3b82f6 100%) !important;
+          color: #fff !important;
+        }
+        body.dark-theme .profile-menu, body.dark-theme .footer {
+          background: #23272b !important;
+          color: #e5e7eb !important;
+        }
+      `;
+      document.head.appendChild(style);
+    })();
+  </script>
 </body>
 </html>

@@ -130,6 +130,30 @@
       margin-top: 1rem;
       display: none;
     }
+
+    /* Dark theme styles */
+    body.dark-theme {
+      background: #181a1b !important;
+      color: #e5e7eb !important;
+    }
+    body.dark-theme .container, body.dark-theme .settings-container, body.dark-theme .notes-container {
+      background: #23272b !important;
+      color: #e5e7eb !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+    }
+    body.dark-theme select, body.dark-theme input, body.dark-theme textarea {
+      background: #23272b !important;
+      color: #e5e7eb !important;
+      border-color: #374151 !important;
+    }
+    body.dark-theme .save-btn {
+      background: linear-gradient(90deg,#00a82d 0%,#3b82f6 100%) !important;
+      color: #fff !important;
+    }
+    body.dark-theme .profile-menu, body.dark-theme .footer {
+      background: #23272b !important;
+      color: #e5e7eb !important;
+    }
   </style>
 </head>
 <body>
@@ -330,6 +354,52 @@
     };
     // Initialize
     fetchProfile();
+
+    // Apply user settings from localStorage
+    function applySettings() {
+      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      // Theme
+      if (s.theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else if (s.theme === 'light') {
+        document.body.classList.remove('dark-theme');
+      } else if (s.theme === 'system') {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.body.classList.add('dark-theme');
+        } else {
+          document.body.classList.remove('dark-theme');
+        }
+      }
+      // Font size
+      document.body.style.fontSize = s.fontSize === 'small' ? '14px' : s.fontSize === 'large' ? '18px' : '16px';
+      // Language (demo for main UI)
+      const langMap = {
+        en: { profile: 'My Profile', manage: 'Manage your personal information', edit: 'Edit Profile', save: 'Save Changes', cancel: 'Cancel', updated: 'Profile updated successfully!' },
+        tr: { profile: 'Profilim', manage: 'Kişisel bilgilerinizi yönetin', edit: 'Profili Düzenle', save: 'Değişiklikleri Kaydet', cancel: 'İptal', updated: 'Profil başarıyla güncellendi!' },
+        de: { profile: 'Mein Profil', manage: 'Verwalten Sie Ihre persönlichen Informationen', edit: 'Profil Bearbeiten', save: 'Änderungen speichern', cancel: 'Abbrechen', updated: 'Profil erfolgreich aktualisiert!' },
+        fr: { profile: 'Mon Profil', manage: 'Gérez vos informations personnelles', edit: 'Modifier le profil', save: 'Enregistrer les modifications', cancel: 'Annuler', updated: 'Profil mis à jour avec succès!' }
+      };
+      const t = langMap[s.lang || 'en'];
+      if (t) {
+        const h1 = document.querySelector('.profile-title');
+        if (h1) h1.textContent = t.profile;
+        const subtitle = document.querySelector('.profile-subtitle');
+        if (subtitle) subtitle.textContent = t.manage;
+        const editBtn = document.getElementById('edit-btn');
+        if (editBtn) editBtn.textContent = t.edit;
+        const saveBtn = document.querySelector('.save-btn');
+        if (saveBtn) saveBtn.textContent = t.save;
+        const cancelBtn = document.getElementById('cancel-btn');
+        if (cancelBtn) cancelBtn.textContent = t.cancel;
+        const successMsg = document.getElementById('success-message');
+        if (successMsg) successMsg.textContent = t.updated;
+      }
+    }
+    applySettings();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      if (s.theme === 'system') applySettings();
+    });
   </script>
 </body>
 </html>

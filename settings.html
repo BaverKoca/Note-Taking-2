@@ -19,9 +19,46 @@
       </div>
     </nav>
   </header>
-  <div class="container">
-    <h1>Settings</h1>
-    <p>This is your settings page. You can add settings features here.</p>
+  <div class="container settings-container" style="max-width:600px;margin:48px auto 0 auto;background:#fff;border-radius:18px;box-shadow:0 8px 32px rgba(59,130,246,0.13),0 1.5px 8px rgba(0,0,0,0.08);padding:2.5rem 2rem 2rem 2rem;">
+    <h1 style="color:#2563eb;font-size:2rem;margin-bottom:1.5rem;text-align:center;">Settings</h1>
+    <form id="settings-form" style="display:grid;gap:1.5rem;">
+      <div>
+        <label style="font-weight:600;color:#374151;">Theme</label><br>
+        <select id="theme-select" style="width:100%;padding:10px 14px;font-size:1rem;border-radius:7px;border:1.5px solid #e3e6ea;outline:none;">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system">System Default</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-weight:600;color:#374151;">Notifications</label><br>
+        <input type="checkbox" id="notif-checkbox" style="margin-right:8px;"> Enable email notifications<br>
+        <input type="checkbox" id="push-checkbox" style="margin-right:8px;"> Enable push notifications
+      </div>
+      <div>
+        <label style="font-weight:600;color:#374151;">Language</label><br>
+        <select id="lang-select" style="width:100%;padding:10px 14px;font-size:1rem;border-radius:7px;border:1.5px solid #e3e6ea;outline:none;">
+          <option value="en">English</option>
+          <option value="tr">Turkish</option>
+          <option value="de">German</option>
+          <option value="fr">French</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-weight:600;color:#374151;">Font Size</label><br>
+        <select id="font-size-select" style="width:100%;padding:10px 14px;font-size:1rem;border-radius:7px;border:1.5px solid #e3e6ea;outline:none;">
+          <option value="small">Small</option>
+          <option value="medium">Medium</option>
+          <option value="large">Large</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-weight:600;color:#374151;">Privacy</label><br>
+        <input type="checkbox" id="privacy-checkbox" style="margin-right:8px;"> Make my notes private
+      </div>
+      <button type="submit" class="save-btn" style="margin-top:10px;">Save Settings</button>
+      <div id="settings-success" style="color:#00a82d;margin-top:10px;display:none;text-align:center;">Settings saved!</div>
+    </form>
   </div>
   <footer class="footer">
     <p>&copy; 2025 Evernote Corporation<br>Developed by Baver Koca</p>
@@ -56,6 +93,174 @@
       fetch('/api/logout', { method: 'POST', credentials: 'include' })
         .then(() => window.location.href = 'index.html');
     };
+    // Settings logic (localStorage for demo)
+    const settingsForm = document.getElementById('settings-form');
+    const themeSelect = document.getElementById('theme-select');
+    const notifCheckbox = document.getElementById('notif-checkbox');
+    const pushCheckbox = document.getElementById('push-checkbox');
+    const langSelect = document.getElementById('lang-select');
+    const fontSizeSelect = document.getElementById('font-size-select');
+    const privacyCheckbox = document.getElementById('privacy-checkbox');
+    const settingsSuccess = document.getElementById('settings-success');
+
+    // Apply settings to the page
+    function applySettings(s) {
+      // Theme
+      if (s.theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else if (s.theme === 'light') {
+        document.body.classList.remove('dark-theme');
+      } else if (s.theme === 'system') {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.body.classList.add('dark-theme');
+        } else {
+          document.body.classList.remove('dark-theme');
+        }
+      }
+      // Font size
+      document.body.style.fontSize = s.fontSize === 'small' ? '14px' : s.fontSize === 'large' ? '18px' : '16px';
+      // Language (full page demo)
+      const langMap = {
+        en: {
+          settings: 'Settings',
+          theme: 'Theme',
+          notifications: 'Notifications',
+          emailNotif: 'Enable email notifications',
+          pushNotif: 'Enable push notifications',
+          language: 'Language',
+          fontSize: 'Font Size',
+          privacy: 'Privacy',
+          makePrivate: 'Make my notes private',
+          save: 'Save Settings',
+          saved: 'Settings saved!'
+        },
+        tr: {
+          settings: 'Ayarlar',
+          theme: 'Tema',
+          notifications: 'Bildirimler',
+          emailNotif: 'E-posta bildirimlerini etkinleştir',
+          pushNotif: 'Anlık bildirimleri etkinleştir',
+          language: 'Dil',
+          fontSize: 'Yazı Boyutu',
+          privacy: 'Gizlilik',
+          makePrivate: 'Notlarımı gizli yap',
+          save: 'Ayarları Kaydet',
+          saved: 'Ayarlar kaydedildi!'
+        },
+        de: {
+          settings: 'Einstellungen',
+          theme: 'Thema',
+          notifications: 'Benachrichtigungen',
+          emailNotif: 'E-Mail-Benachrichtigungen aktivieren',
+          pushNotif: 'Push-Benachrichtigungen aktivieren',
+          language: 'Sprache',
+          fontSize: 'Schriftgröße',
+          privacy: 'Privatsphäre',
+          makePrivate: 'Meine Notizen privat machen',
+          save: 'Einstellungen speichern',
+          saved: 'Einstellungen gespeichert!'
+        },
+        fr: {
+          settings: 'Paramètres',
+          theme: 'Thème',
+          notifications: 'Notifications',
+          emailNotif: 'Activer les notifications par e-mail',
+          pushNotif: 'Activer les notifications push',
+          language: 'Langue',
+          fontSize: 'Taille de police',
+          privacy: 'Confidentialité',
+          makePrivate: 'Rendre mes notes privées',
+          save: 'Enregistrer les paramètres',
+          saved: 'Paramètres enregistrés!'
+        }
+      };
+      const t = langMap[s.lang || 'en'];
+      document.querySelector('.settings-container h1').textContent = t.settings;
+      document.querySelectorAll('label')[0].textContent = t.theme;
+      document.querySelectorAll('label')[1].textContent = t.notifications;
+      document.querySelectorAll('label')[2].textContent = t.language;
+      document.querySelectorAll('label')[3].textContent = t.fontSize;
+      document.querySelectorAll('label')[4].textContent = t.privacy;
+      document.getElementById('notif-checkbox').nextSibling.textContent = ' ' + t.emailNotif;
+      document.getElementById('push-checkbox').nextSibling.textContent = ' ' + t.pushNotif;
+      document.getElementById('privacy-checkbox').nextSibling.textContent = ' ' + t.makePrivate;
+      document.querySelector('.save-btn').textContent = t.save;
+      document.getElementById('settings-success').textContent = t.saved;
+      // Privacy (demo: show/hide privacy message)
+      let privacyMsg = document.getElementById('privacy-msg');
+      if (!privacyMsg) {
+        privacyMsg = document.createElement('div');
+        privacyMsg.id = 'privacy-msg';
+        privacyMsg.style = 'margin-top:18px;text-align:center;color:#2563eb;font-size:1.08rem;';
+        document.querySelector('.settings-container').appendChild(privacyMsg);
+      }
+      privacyMsg.textContent = s.privacy ? (t.privacy + ': ' + t.makePrivate) : '';
+    }
+
+    // Load settings
+    function loadSettings() {
+      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      if (s.theme) themeSelect.value = s.theme;
+      if (s.notif !== undefined) notifCheckbox.checked = s.notif;
+      if (s.push !== undefined) pushCheckbox.checked = s.push;
+      if (s.lang) langSelect.value = s.lang;
+      if (s.fontSize) fontSizeSelect.value = s.fontSize;
+      if (s.privacy !== undefined) privacyCheckbox.checked = s.privacy;
+      applySettings(s);
+    }
+    settingsForm.onsubmit = function(e) {
+      e.preventDefault();
+      const s = {
+        theme: themeSelect.value,
+        notif: notifCheckbox.checked,
+        push: pushCheckbox.checked,
+        lang: langSelect.value,
+        fontSize: fontSizeSelect.value,
+        privacy: privacyCheckbox.checked
+      };
+      localStorage.setItem('evernoteSettings', JSON.stringify(s));
+      applySettings(s);
+      settingsSuccess.style.display = 'block';
+      setTimeout(()=>settingsSuccess.style.display='none', 2000);
+    };
+    // Apply on load
+    loadSettings();
+    // React to system theme changes if system selected
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      if (s.theme === 'system') applySettings(s);
+    });
+  </script>
+  <script>
+    // Add dark theme CSS
+    (function(){
+      const style = document.createElement('style');
+      style.textContent = `
+        body.dark-theme {
+          background: #181a1b !important;
+          color: #e5e7eb !important;
+        }
+        body.dark-theme .container, body.dark-theme .settings-container {
+          background: #23272b !important;
+          color: #e5e7eb !important;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+        }
+        body.dark-theme select, body.dark-theme input, body.dark-theme textarea {
+          background: #23272b !important;
+          color: #e5e7eb !important;
+          border-color: #374151 !important;
+        }
+        body.dark-theme .save-btn {
+          background: linear-gradient(90deg,#00a82d 0%,#3b82f6 100%) !important;
+          color: #fff !important;
+        }
+        body.dark-theme .profile-menu, body.dark-theme .footer {
+          background: #23272b !important;
+          color: #e5e7eb !important;
+        }
+      `;
+      document.head.appendChild(style);
+    })();
   </script>
 </body>
 </html>
