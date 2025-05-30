@@ -6,68 +6,105 @@
   <title>Sign In / Sign Up - Evernote</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    body { background: #f3f4f6; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background: linear-gradient(120deg, #f7f8fa 0%, #e6f4ea 100%); margin: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     .auth-container {
-      max-width: 400px;
-      margin: 60px auto;
+      max-width: 420px;
+      margin: 64px auto;
       background: #fff;
-      border-radius: 18px;
+      border-radius: 22px;
       box-shadow: 0 8px 32px rgba(59,130,246,0.13),0 1.5px 8px rgba(0,0,0,0.08);
-      padding: 2.5rem 2rem 2rem 2rem;
+      padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
     }
     .auth-toggle {
       display: flex;
       justify-content: center;
-      margin-bottom: 22px;
+      margin-bottom: 28px;
+      gap: 0;
     }
     .auth-toggle button {
       flex: 1;
-      padding: 10px 0;
+      padding: 12px 0;
       border: none;
-      font-size: 1.08rem;
+      font-size: 1.13rem;
       font-weight: 600;
       cursor: pointer;
-      border-radius: 8px 8px 0 0;
+      border-radius: 10px 10px 0 0;
       background: #f3f4f6;
       color: #374151;
-      transition: background 0.2s;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.1px;
     }
     .auth-toggle button.active {
-      background: #3b82f6;
+      background: linear-gradient(90deg,#00a82d 0%,#3b82f6 100%);
       color: #fff;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
     }
     .auth-form h2 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: #2563eb;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
       text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.2px;
     }
     .auth-form input {
       width: 100%;
-      padding: 10px 14px;
+      padding: 12px 16px;
       font-size: 1.08rem;
-      border-radius: 7px;
+      border-radius: 8px;
       border: 1.5px solid #e3e6ea;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       outline: none;
+      background: #f7f8fa;
+      transition: border 0.18s, box-shadow 0.18s;
+    }
+    .auth-form input:focus {
+      border: 1.5px solid #3b82f6;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+      background: #f0f6ff;
     }
     .auth-form button[type="submit"] {
       width: 100%;
-      background: #00a82d;
+      background: linear-gradient(90deg,#00a82d 0%,#3b82f6 100%);
       color: #fff;
       border: none;
-      padding: 12px 0;
-      border-radius: 7px;
-      font-size: 1.08rem;
-      font-weight: 600;
+      padding: 14px 0;
+      border-radius: 8px;
+      font-size: 1.13rem;
+      font-weight: 700;
       cursor: pointer;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+    .auth-form button[type="submit"]:hover {
+      opacity: 0.92;
+      box-shadow: 0 4px 16px rgba(0,168,45,0.10);
     }
     .error-message {
       color: #ef4444;
-      font-size: 1rem;
+      font-size: 1.05rem;
       margin-top: 10px;
       text-align: center;
       display: none;
+      background: #fee2e2;
+      border-radius: 7px;
+      padding: 8px 0;
+    }
+    @media (max-width: 600px) {
+      .auth-container {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+      }
+      .auth-form h2 {
+        font-size: 1.18rem;
+      }
+      .auth-form input, .auth-form button[type="submit"] {
+        font-size: 0.98rem;
+      }
     }
   </style>
 </head>
