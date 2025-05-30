@@ -12,6 +12,7 @@
     <nav class="nav-links" style="position:relative;">
       <button id="profile-btn" class="profile-btn">Profile</button>
       <div id="profile-menu" class="profile-menu">
+        <button class="profile-menu-btn" id="profile-menu-note">Note</button>
         <button class="profile-menu-btn" id="profile-menu-profile">Profile</button>
         <button class="profile-menu-btn" id="profile-menu-diary">Diary</button>
         <button class="profile-menu-btn" id="profile-menu-settings">Settings</button>
@@ -22,6 +23,7 @@
   <div class="main-layout">
     <aside class="sidebar">
       <h2>Your Notes</h2>
+      <input type="text" id="search-notes" class="note-title-input" placeholder="Search notes..." style="margin-bottom:10px;" />
       <div class="saved-notes-list" id="notes-list"></div>
       <button class="btn" id="add-note-btn">+ New Note</button>
     </aside>
@@ -54,18 +56,26 @@
     const saveBtn = document.getElementById('save-note-btn');
     const deleteBtn = document.getElementById('delete-note-btn');
     const addBtn = document.getElementById('add-note-btn');
+    const searchInput = document.getElementById('search-notes');
+    searchInput.addEventListener('input', function() {
+      renderNotesList(this.value.trim().toLowerCase());
+    });
     function fetchNotes() {
       fetch('/api/notes', { credentials: 'include' })
         .then(r => r.json())
         .then(arr => {
           notes = arr;
-          renderNotesList();
+          renderNotesList(searchInput.value.trim().toLowerCase());
           if (notes.length && !selectedId) selectNote(notes[0].id);
         });
     }
-    function renderNotesList() {
+    function renderNotesList(searchTerm) {
       notesList.innerHTML = '';
-      notes.forEach(note => {
+      (notes.filter(note => {
+        if (!searchTerm) return true;
+        return (note.title && note.title.toLowerCase().includes(searchTerm)) ||
+               (note.content && note.content.toLowerCase().includes(searchTerm));
+      })).forEach(note => {
         const div = document.createElement('div');
         div.className = 'saved-note-item' + (note.id === selectedId ? ' active' : '');
         div.innerHTML = `<div class='saved-title'>${note.title || 'Untitled'}</div><div class='saved-preview'>${(note.content||'').slice(0,40)}${(note.content||'').length>40?'...':''}</div>`;
@@ -80,7 +90,7 @@
         noteTitle.value = note.title;
         noteContent.value = note.content;
       }
-      renderNotesList();
+      renderNotesList(searchInput.value.trim().toLowerCase());
     }
     function saveNote() {
       const title = noteTitle.value.trim();
@@ -119,7 +129,7 @@
       selectedId = null;
       noteTitle.value = '';
       noteContent.value = '';
-      renderNotesList();
+      renderNotesList(searchInput.value.trim().toLowerCase());
     }
     saveBtn.onclick = saveNote;
     deleteBtn.onclick = deleteNote;
@@ -154,6 +164,9 @@
       e.preventDefault();
       fetch('/api/logout', { method: 'POST', credentials: 'include' })
         .then(() => window.location.href = 'index.html');
+    };
+    document.getElementById('profile-menu-note').onclick = function() {
+      window.location.href = 'note.html';
     };
     fetchNotes();
   </script>

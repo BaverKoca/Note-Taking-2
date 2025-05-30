@@ -12,6 +12,7 @@
     <nav class="nav-links" style="position:relative;">
       <button id="profile-btn" class="profile-btn">Profile</button>
       <div id="profile-menu" class="profile-menu">
+        <button class="profile-menu-btn" id="profile-menu-note">Note</button>
         <button class="profile-menu-btn" id="profile-menu-profile">Profile</button>
         <button class="profile-menu-btn" id="profile-menu-diary">Diary</button>
         <button class="profile-menu-btn" id="profile-menu-settings">Settings</button>
@@ -87,6 +88,9 @@
     };
     document.getElementById('profile-menu-settings').onclick = function() {
       window.location.href = 'settings.html';
+    };
+    document.getElementById('profile-menu-note').onclick = function() {
+      window.location.href = 'note.html';
     };
     document.getElementById('logout-link').onclick = function(e) {
       e.preventDefault();

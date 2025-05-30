@@ -280,6 +280,7 @@
       <nav class="nav-links" style="position:relative;">
         <button id="profile-btn" class="profile-btn">Profile</button>
         <div id="profile-menu" class="profile-menu">
+          <button class="profile-menu-btn" id="profile-menu-note">Note</button>
           <button class="profile-menu-btn" id="profile-menu-profile">Profile</button>
           <button class="profile-menu-btn" id="profile-menu-diary">Diary</button>
           <button class="profile-menu-btn" id="profile-menu-settings">Settings</button>
@@ -356,6 +357,9 @@
         e.preventDefault();
         fetch('/api/logout', { method: 'POST', credentials: 'include' })
           .then(() => window.location.href = 'index.html');
+      };
+      document.getElementById('profile-menu-note').onclick = function() {
+        window.location.href = 'note.html';
       };
 
       // Calendar and Diary Logic
@@ -622,6 +626,40 @@
       updateEntryHeader();
       loadEntries();
       generateCalendar();
+    </script>
+    <script>
+      // Add dark theme CSS if not present
+      (function(){
+        if (!document.getElementById('dark-theme-style')) {
+          const style = document.createElement('style');
+          style.id = 'dark-theme-style';
+          style.textContent = `
+            body.dark-theme {
+              background: #181a1b !important;
+              color: #e5e7eb !important;
+            }
+            body.dark-theme .container, body.dark-theme .settings-container, body.dark-theme .diary-main, body.dark-theme .diary-container, body.dark-theme .calendar-section, body.dark-theme .entry-section {
+              background: #23272b !important;
+              color: #e5e7eb !important;
+              box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+            }
+            body.dark-theme select, body.dark-theme input, body.dark-theme textarea {
+              background: #23272b !important;
+              color: #e5e7eb !important;
+              border-color: #374151 !important;
+            }
+            body.dark-theme .save-btn, body.dark-theme .delete-entry {
+              background: linear-gradient(90deg,#00a82d 0%,#3b82f6 100%) !important;
+              color: #fff !important;
+            }
+            body.dark-theme .profile-menu, body.dark-theme .footer {
+              background: #23272b !important;
+              color: #e5e7eb !important;
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      })();
     </script>
   </body>
 </html>
