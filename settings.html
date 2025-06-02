@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Settings - Evernote</title>
+  <title>Settings - NoteNest</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="navbar">
-    <div class="logo" id="logo-link">Evernote</div>
+    <div class="logo" id="logo-link">NoteNest</div>
     <nav class="nav-links" style="position:relative;">
       <button id="profile-btn" class="profile-btn">Profile</button>
       <div id="profile-menu" class="profile-menu">
@@ -43,6 +43,8 @@
           <option value="tr">Turkish</option>
           <option value="de">German</option>
           <option value="fr">French</option>
+          <option value="es">Spanish</option>
+          <option value="ru">Russian</option>
         </select>
       </div>
       <div>
@@ -62,7 +64,7 @@
     </form>
   </div>
   <footer class="footer">
-    <p>&copy; 2025 Evernote Corporation<br>Developed by Baver Koca</p>
+    <p>&copy; 2025 NoteNest Corporation<br>Developed by Baver Koca</p>
   </footer>
   <script>
     // Profile menu logic (same as note.html)
@@ -176,6 +178,32 @@
           makePrivate: 'Rendre mes notes privées',
           save: 'Enregistrer les paramètres',
           saved: 'Paramètres enregistrés!'
+        },
+        es: {
+          settings: 'Configuración',
+          theme: 'Tema',
+          notifications: 'Notificaciones',
+          emailNotif: 'Habilitar notificaciones por correo electrónico',
+          pushNotif: 'Habilitar notificaciones push',
+          language: 'Idioma',
+          fontSize: 'Tamaño de fuente',
+          privacy: 'Privacidad',
+          makePrivate: 'Hacer mis notas privadas',
+          save: 'Guardar configuración',
+          saved: '¡Configuración guardada!'
+        },
+        ru: {
+          settings: 'Настройки',
+          theme: 'Тема',
+          notifications: 'Уведомления',
+          emailNotif: 'Включить уведомления по электронной почте',
+          pushNotif: 'Включить push-уведомления',
+          language: 'Язык',
+          fontSize: 'Размер шрифта',
+          privacy: 'Конфиденциальность',
+          makePrivate: 'Сделать мои заметки приватными',
+          save: 'Сохранить настройки',
+          saved: 'Настройки сохранены!'
         }
       };
       const t = langMap[s.lang || 'en'];
@@ -203,7 +231,7 @@
 
     // Load settings
     function loadSettings() {
-      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      const s = JSON.parse(localStorage.getItem('notenestSettings')||'{}');
       if (s.theme) themeSelect.value = s.theme;
       if (s.notif !== undefined) notifCheckbox.checked = s.notif;
       if (s.push !== undefined) pushCheckbox.checked = s.push;
@@ -222,7 +250,7 @@
         fontSize: fontSizeSelect.value,
         privacy: privacyCheckbox.checked
       };
-      localStorage.setItem('evernoteSettings', JSON.stringify(s));
+      localStorage.setItem('notenestSettings', JSON.stringify(s));
       applySettings(s);
       settingsSuccess.style.display = 'block';
       setTimeout(()=>settingsSuccess.style.display='none', 2000);
@@ -231,7 +259,7 @@
     loadSettings();
     // React to system theme changes if system selected
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      const s = JSON.parse(localStorage.getItem('notenestSettings')||'{}');
       if (s.theme === 'system') applySettings(s);
     });
   </script>
