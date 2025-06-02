@@ -2,7 +2,7 @@
 
 A comprehensive, feature-rich note-taking web application inspired by NoteNest. Designed for a seamless, responsive, and intuitive user experience.
 
-##Screenshots
+## Screenshots
 
 ![Image](https://github.com/user-attachments/assets/7a47ed19-e57c-4db0-b013-4fcfcf57160d)
 ![Image](https://github.com/user-attachments/assets/c5617ab6-1db4-4e40-88d8-c6f685aa503a)
