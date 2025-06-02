@@ -2,7 +2,13 @@
 
 A comprehensive, feature-rich note-taking web application inspired by NoteNest. Designed for a seamless, responsive, and intuitive user experience.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+##Screenshots
+![Image](https://github.com/user-attachments/assets/7a47ed19-e57c-4db0-b013-4fcfcf57160d)
+![Image](https://github.com/user-attachments/assets/c5617ab6-1db4-4e40-88d8-c6f685aa503a)
+![Image](https://github.com/user-attachments/assets/74a60400-ece7-452d-92c9-1be6f5592c0a)
+![Image](https://github.com/user-attachments/assets/c59ddbac-22fb-47c5-95f8-ab18fcb5bfd2)
+![Image](https://github.com/user-attachments/assets/a931c992-d7aa-42a3-aac9-9954b4103f36)
+![Image](https://github.com/user-attachments/assets/45030ecf-d732-4bdc-b279-6cfe650e1e91)
 
 ## ✨ Key Features
 
@@ -50,7 +56,7 @@ A comprehensive, feature-rich note-taking web application inspired by NoteNest. 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/note-taking-app.git
+   git clone https://github.com/BaverKoca/note-taking-app.git
    ```
 2. **Navigate to the project directory:**
    ```bash
@@ -99,18 +105,12 @@ A comprehensive, feature-rich note-taking web application inspired by NoteNest. 
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request for review
 
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - Design inspiration from NoteNest
 - Icons and UI elements based on modern design principles
 - Special thanks to all contributors
 
-## 📬 Contact
+## 📄 License
 
-**Baver Koca**  
-Email: [Your Email]  
-Project Repository: [https://github.com/yourusername/note-taking-app](https://github.com/yourusername/note-taking-app)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
