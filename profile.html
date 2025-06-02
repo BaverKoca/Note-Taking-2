@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile - Evernote</title>
+  <title>Profile - NoteNest</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     .profile-container {
@@ -158,7 +158,7 @@
 </head>
 <body>
   <header class="navbar">
-    <div class="logo" id="logo-link">Evernote</div>
+    <div class="logo" id="logo-link">NoteNest</div>
     <nav class="nav-links" style="position:relative;">
       <button id="profile-btn" class="profile-btn">Profile</button>
       <div id="profile-menu" class="profile-menu">
@@ -361,7 +361,7 @@
 
     // Apply user settings from localStorage
     function applySettings() {
-      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      const s = JSON.parse(localStorage.getItem('notenestSettings')||'{}');
       // Theme
       if (s.theme === 'dark') {
         document.body.classList.add('dark-theme');
@@ -401,7 +401,7 @@
     }
     applySettings();
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-      const s = JSON.parse(localStorage.getItem('evernoteSettings')||'{}');
+      const s = JSON.parse(localStorage.getItem('notenestSettings')||'{}');
       if (s.theme === 'system') applySettings();
     });
   </script>

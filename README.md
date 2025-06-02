@@ -1,6 +1,6 @@
-# Modern Note-Taking Application
+# NoteNest: Modern Note-Taking Application
 
-A comprehensive, feature-rich note-taking web application inspired by Evernote. Designed with a focus on clean, responsive UI and an exceptional user experience.
+A comprehensive, feature-rich note-taking web application inspired by NoteNest. Designed for a seamless, responsive, and intuitive user experience.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -11,13 +11,13 @@ A comprehensive, feature-rich note-taking web application inspired by Evernote. 
 - Instant, real-time search across all notes
 - Advanced rich text formatting options
 - Automatic saving to prevent data loss
-- Fully responsive layout for seamless use on any device
+- Fully responsive layout for all devices
 
 ### 📅 Digital Diary
 - Calendar-based interface for daily diary entries
 - Capture daily thoughts and reflections
 - Intuitive navigation between dates
-- Visual indicators highlighting days with entries
+- Visual indicators for days with entries
 
 ### 👤 User Management
 - Secure user authentication and session management
@@ -25,7 +25,7 @@ A comprehensive, feature-rich note-taking web application inspired by Evernote. 
 - Password protection and email verification
 
 ### ⚙️ Personalization
-- Multi-language support: English, Turkish, German, French
+- Multi-language support: English, Turkish, German, French, Spanish, Russian
 - Light and dark theme options with system theme sync
 - Adjustable font sizes for accessibility
 - Comprehensive privacy controls
@@ -105,7 +105,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## 🙏 Acknowledgments
 
-- Design inspiration from Evernote
+- Design inspiration from NoteNest
 - Icons and UI elements based on modern design principles
 - Special thanks to all contributors
 
