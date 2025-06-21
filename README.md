@@ -57,11 +57,11 @@ A comprehensive, feature-rich note-taking web application inspired by NoteNest. 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/BaverKoca/note-taking-app.git
+   git clone https://github.com/BaverKoca/Note-Taking-2.git
    ```
 2. **Navigate to the project directory:**
    ```bash
-   cd note-taking-app
+   cd Note-Taking-2
    ```
 3. **Set up your web server** to serve the project files.
 4. **Configure API endpoints** in the JavaScript files as needed.
